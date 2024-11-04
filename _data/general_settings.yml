@@ -1,0 +1,13 @@
+# General Settings
+title: "X23D AG"
+email: "hooman.esfandiari@balgrict.ch"
+email_2: "hooman.esfandiari@balgrist.ch"
+description: >- # this means to ignore newlines until "baseurl:"
+  X23D AG
+
+
+copyright_text: "X23D AG<sup>®</sup> 2024."
+
+google_analytics:
+  enable: false
+  key: "UA-664136761-1"  # UA-664136761-1

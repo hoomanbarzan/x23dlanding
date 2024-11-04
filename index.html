@@ -1,0 +1,90 @@
+---
+layout: default
+title: X23D AG - Coming Soon
+custom_css: purple
+custom_font: font2
+page_content: 
+  date: "Jan 1 2025"
+  title: "Surgical navigation reimagined: <br /> Accurate whilst Simple! "
+  sub_title: "We'll be here soon with a new website.<br /> Eager to hear more, get in contact:"
+  action_email: "hooman.esfandiari@balgrist.ch"
+  button_text: "Join"
+  background_image: "/assets/images/x23d/banner1.jpeg"
+---
+
+<div class="split-layout">
+  <div class="content-wrapper h-100">
+    <div class="content-left wrapper image-wrappe rbg-image bg-image bg-auto no-overlay inverse-text" data-image-src="{{page.page_content.background_image}}">
+      <div class="container inner text-center h-100 d-flex flex-column justify-content-center">
+        <div class="row">
+          <div class="col-xl-10 offset-xl-1">
+            <div class="countdown" data-date="{{page.page_content.date}}">
+              <div class="row text-center">
+                <div class="col-md-3">
+                  <h3 data-days>0</h3>
+                  <p class="mb-0">days</p>
+                </div>
+                <!--/column -->
+                <div class="col-md-3">
+                  <h3 data-hours>0</h3>
+                  <p class="mb-0">hours</p>
+                </div>
+                <!--/column -->
+                <div class="col-md-3">
+                  <h3 data-minutes>0</h3>
+                  <p class="mb-0">minutes</p>
+                </div>
+                <!--/column -->
+                <div class="col-md-3">
+                  <h3 data-seconds>0</h3>
+                  <p class="mb-0">seconds</p>
+                </div>
+                <!--/column -->
+              </div>
+              <!-- /.row -->
+            </div>
+            <!--/.countdown -->
+          </div>
+          <!-- /column -->
+        </div>
+        <!-- /.row -->
+      </div>
+      <!-- /.container -->
+    </div>
+    <!-- /.content-left -->
+    <div class="content-right wrapper white-wrapper text-center">
+      <div class="inner h-100 d-flex flex-column justify-content-center">
+        <img src="/assets/images/x23d/logo.png" alt="Description of the image" style="width: 100%; max-width: 400px; height: auto; display: block; margin: 0 auto;">
+        <div class="space40"></div>
+        {% if page.page_content.title %}
+         <h1 class="display-2 mb-30" style="color: rgb(0, 150, 150);">{{page.page_content.title}}</h1>
+        {% endif %}
+        {% if page.page_content.sub_title %}
+         <p class="lead large" style="color: rgb(0, 150, 150);"> {{page.page_content.sub_title}}</p>
+        {% endif %}
+        <div class="space20"></div>
+        <div class="row">
+          <div class="col-lg-6 offset-lg-3 col-xl-6 offset-xl-3">
+            <div class="newsletter-wrapper">
+              <form action="https://formsubmit.io/send/{{page.page_content.action_email}}"  id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+                <div id="mc_embed_signup_scroll" class="input-group">
+                  <input type="email" value="" name="EMAIL" class="email form-control mb-0 mr-2 mb-sm-0" id="mce-EMAIL" placeholder="Email Address" required style="background-color: rgba(0, 150, 150, 0.5); color: white">
+                  <button type="submit" name="subscribe" id="mc-embedded-subscribe" class="btn btn-rounded btn-default m-0 pull-right" style="background-color: rgba(0, 150, 150, 0.5); color: white;">{{page.page_content.button_text}}</button>
+                  <div class="clearfix"></div>
+                </div>
+              </form>
+            </div>
+            <!-- /.newsletter-wrapper -->
+          </div>
+          <!-- /column -->
+        </div>
+        <!-- /.row -->
+        <div class="space40"></div>
+        <p class="lead large" style="color: rgb(0, 150, 150);">{{site.data.general_settings.copyright_text}}</p>
+      </div>
+      <!-- /.inner -->
+    </div>
+    <!-- /.content-right -->
+  </div>
+  <!-- /.content-wrapper -->
+</div>
