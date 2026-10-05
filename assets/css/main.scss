@@ -9226,6 +9226,69 @@ a.partner-card:focus-visible {
 
 }
 
+/* Tablet research highlights
+   The fixed desktop text/visual columns do not fit three-up between 761px and
+   1040px. Stack each card's copy above its visual while retaining the aligned
+   three-card composition. This rule intentionally lives after the component
+   rules so desktop declarations cannot override it. */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .signal-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .signal,
+  .signal-workload,
+  .signal-latency,
+  .signal-accuracy {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(150px, auto) 132px;
+    gap: 18px;
+    align-content: start;
+    min-width: 0;
+    min-height: 338px;
+    padding: 42px clamp(18px, 2.5vw, 30px) 20px;
+  }
+
+  .signal:first-child {
+    padding-left: clamp(18px, 2.5vw, 30px);
+  }
+
+  .signal:last-child {
+    padding-right: clamp(18px, 2.5vw, 30px);
+  }
+
+  .signal-workload > span,
+  .signal-latency > span:not(.latency-ring-primary),
+  .signal-accuracy > span:not(.accuracy-target) {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    justify-self: start;
+    width: 100%;
+    max-width: none;
+    font-size: clamp(0.9rem, 1.7vw, 1.08rem);
+    line-height: 1.48;
+  }
+
+  .signal-workload .signal-visual,
+  .signal-latency > .latency-ring-primary,
+  .signal-accuracy > .accuracy-target {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: center;
+    justify-self: center;
+  }
+
+  .signal-workload .signal-visual {
+    width: 156px;
+    height: 114px;
+  }
+
+  .signal-source {
+    margin-top: 12px;
+  }
+}
+
 /* Photographic mission backdrop: an original X23D navigation scene, graded
    from the white opening into the deep-green platform chapter below. */
 .mission-opening {

@@ -225,14 +225,17 @@ const initializeSpine = async () => {
     resizeObserver.observe(container);
     container.classList.add('is-webgl-ready');
 
+    // The rotation communicates that this is an actual 3D reconstruction, so
+    // keep it running on touch devices as well. Respect reduced-motion by
+    // slowing the movement substantially instead of freezing the model.
+    const rotationSpeed = reduceMotion ? 0.11 : 0.42;
     let previousTime = 0;
     const render = (time = 0) => {
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
-      if (!reduceMotion) spine.rotation.y += delta * 0.42;
-      else spine.rotation.y = -0.52;
+      spine.rotation.y += delta * rotationSpeed;
       renderer.render(scene, camera);
-      if (!reduceMotion) requestAnimationFrame(render);
+      requestAnimationFrame(render);
     };
 
     requestAnimationFrame(render);
