@@ -1,6 +1,9 @@
 let THREE;
 
 const container = document.querySelector('[data-spine-model]');
+const isIPadDevice = /iPad/i.test(navigator.userAgent)
+  || (/Macintosh/i.test(navigator.userAgent) && navigator.maxTouchPoints > 1)
+  || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
 const parseBinaryStl = (buffer, options = {}) => {
   const {
@@ -141,8 +144,7 @@ const initializeSpine = async () => {
 
   const canvas = container.querySelector('canvas');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isIPad = /iPad/i.test(navigator.userAgent)
-    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isIPad = isIPadDevice;
 
   try {
     // Keep the substantial Three.js runtime off the critical loading path.
@@ -291,6 +293,11 @@ const initializeSpine = async () => {
 
 const scheduleSpineInitialization = () => {
   if (!container) return;
+
+  // WebKit on iPad can terminate the page's graphics process while this model
+  // is initialized. Keep the lightweight image fallback on iPad and never
+  // download Three.js or the STL geometry there.
+  if (isIPadDevice) return;
 
   let started = false;
   const start = () => {
