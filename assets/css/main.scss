@@ -9232,6 +9232,31 @@ a.partner-card:focus-visible {
    three-card composition. This rule intentionally lives after the component
    rules so desktop declarations cannot override it. */
 @media (min-width: 761px) and (max-width: 1100px) {
+  /* Give the pipeline captions, divider and card headings their own vertical
+     zones. On tablet the captions extend below the pipeline, so placing the
+     divider at the section edge made it run directly through the text. */
+  .signal-band {
+    padding-top: 64px;
+  }
+
+  .signal-band::before {
+    top: 30px;
+    right: clamp(42px, 7vw, 78px);
+    left: clamp(42px, 7vw, 78px);
+    opacity: 0.72;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(114, 226, 220, 0.2) 12%,
+      rgba(114, 226, 220, 0.78) 43%,
+      rgba(238, 141, 114, 0.7) 72%,
+      transparent 100%
+    );
+    box-shadow:
+      0 0 10px rgba(114, 226, 220, 0.24),
+      0 0 24px rgba(0, 150, 150, 0.1);
+  }
+
   .signal-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
