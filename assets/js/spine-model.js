@@ -1,4 +1,4 @@
-import * as THREE from '../vendor/three.module.min.js';
+let THREE;
 
 const container = document.querySelector('[data-spine-model]');
 
@@ -141,8 +141,14 @@ const initializeSpine = async () => {
 
   const canvas = container.querySelector('canvas');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isIPad = /iPad/i.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
   try {
+    // Keep the substantial Three.js runtime off the critical loading path.
+    // It is imported only when the model approaches the viewport.
+    THREE = await import('../vendor/three.module.min.js');
+
     const lumbarUrl = new URL('../models/bodyparts3d-lumbar-vertebrae.stl', import.meta.url);
     const sacrumUrl = new URL('../models/bodyparts3d-sacrum.stl', import.meta.url);
     const [lumbarResponse, sacrumResponse] = await Promise.all([fetch(lumbarUrl), fetch(sacrumUrl)]);
@@ -161,8 +167,10 @@ const initializeSpine = async () => {
       fixedColor: new THREE.Color(0xf2b37f) // S1–S2 · warm apricot
     });
 
-    const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    const rendererOptions = { canvas, alpha: true, antialias: !isIPad };
+    if (!isIPad) rendererOptions.powerPreference = 'high-performance';
+    const renderer = new THREE.WebGLRenderer(rendererOptions);
+    renderer.setPixelRatio(isIPad ? 1 : Math.min(window.devicePixelRatio || 1, 2));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -184,15 +192,23 @@ const initializeSpine = async () => {
     rimLight.position.set(3, -4, -3);
     scene.add(rimLight);
 
-    const material = new THREE.MeshPhysicalMaterial({
-      vertexColors: true,
-      emissive: 0x063f40,
-      emissiveIntensity: 0.04,
-      metalness: 0.04,
-      roughness: 0.34,
-      clearcoat: 0.62,
-      clearcoatRoughness: 0.24
-    });
+    const material = isIPad
+      ? new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        emissive: 0x063f40,
+        emissiveIntensity: 0.035,
+        metalness: 0.02,
+        roughness: 0.4
+      })
+      : new THREE.MeshPhysicalMaterial({
+        vertexColors: true,
+        emissive: 0x063f40,
+        emissiveIntensity: 0.04,
+        metalness: 0.04,
+        roughness: 0.34,
+        clearcoat: 0.62,
+        clearcoatRoughness: 0.24
+      });
 
     const spine = new THREE.Group();
     const anatomy = new THREE.Group();
@@ -229,20 +245,78 @@ const initializeSpine = async () => {
     // keep it running on touch devices as well. Respect reduced-motion by
     // slowing the movement substantially instead of freezing the model.
     const rotationSpeed = reduceMotion ? 0.11 : 0.42;
+    let frameId = null;
     let previousTime = 0;
+    let isInViewport = true;
+
     const render = (time = 0) => {
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
       spine.rotation.y += delta * rotationSpeed;
       renderer.render(scene, camera);
-      requestAnimationFrame(render);
+      frameId = requestAnimationFrame(render);
     };
 
-    requestAnimationFrame(render);
+    const updateRenderLoop = () => {
+      const shouldRender = isInViewport && !document.hidden;
+      if (shouldRender && frameId === null) {
+        previousTime = performance.now();
+        frameId = requestAnimationFrame(render);
+      } else if (!shouldRender && frameId !== null) {
+        cancelAnimationFrame(frameId);
+        frameId = null;
+      }
+    };
+
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      isInViewport = entry.isIntersecting;
+      updateRenderLoop();
+    }, { rootMargin: '96px 0px' });
+    visibilityObserver.observe(container);
+    document.addEventListener('visibilitychange', updateRenderLoop);
+
+    canvas.addEventListener('webglcontextlost', (event) => {
+      event.preventDefault();
+      isInViewport = false;
+      updateRenderLoop();
+      container.classList.remove('is-webgl-ready');
+    });
+
+    updateRenderLoop();
   } catch (error) {
     container.classList.remove('is-webgl-ready');
     console.error('The lumbar spine model could not be initialized.', error);
   }
 };
 
-initializeSpine();
+const scheduleSpineInitialization = () => {
+  if (!container) return;
+
+  let started = false;
+  const start = () => {
+    if (started) return;
+    started = true;
+
+    const initialize = () => initializeSpine();
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(initialize, { timeout: 1200 });
+    } else {
+      window.setTimeout(initialize, 80);
+    }
+  };
+
+  if (!('IntersectionObserver' in window)) {
+    start();
+    return;
+  }
+
+  const activationObserver = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    activationObserver.disconnect();
+    start();
+  }, { rootMargin: '360px 0px' });
+
+  activationObserver.observe(container);
+};
+
+scheduleSpineInitialization();
