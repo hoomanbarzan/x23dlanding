@@ -6,22 +6,74 @@
     <meta name="theme-color" content="#071414">
     <meta name="color-scheme" content="light dark">
 
-    <title>{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+    <title>{% if page.seo_title %}{{ page.seo_title }}{% elsif page.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
     <meta name="description" content="{{ page.description | default: site.description }}">
     <link rel="canonical" href="{{ page.url | absolute_url }}">
 
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="X23D">
-    <meta property="og:title" content="{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}">
+    <meta property="og:title" content="{% if page.seo_title %}{{ page.seo_title }}{% elsif page.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}">
     <meta property="og:description" content="{{ page.description | default: site.description }}">
     <meta property="og:url" content="{{ page.url | absolute_url }}">
     <meta property="og:image" content="{{ '/assets/images/hero-poster.jpg' | absolute_url }}">
     <meta property="og:image:width" content="1600">
     <meta property="og:image:height" content="900">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{% if page.title %}{{ page.title }} · {% endif %}{{ site.title }}">
+    <meta name="twitter:title" content="{% if page.seo_title %}{{ page.seo_title }}{% elsif page.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}">
     <meta name="twitter:description" content="{{ page.description | default: site.description }}">
     <meta name="twitter:image" content="{{ '/assets/images/hero-poster.jpg' | absolute_url }}">
+
+    {% if page.url == '/' %}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://x23d.com/#organization",
+            "name": "X23D",
+            "alternateName": "X23D AG",
+            "legalName": "X23D AG",
+            "url": "https://x23d.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://x23d.com/assets/images/x23d-logo.png",
+              "contentUrl": "https://x23d.com/assets/images/x23d-logo.png",
+              "width": 2127,
+              "height": 584
+            },
+            "email": "info@x23d.com",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Lengghalde 5",
+              "postalCode": "8008",
+              "addressLocality": "Zurich",
+              "addressCountry": "CH"
+            },
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "business inquiries",
+              "email": "info@x23d.com"
+            },
+            "sameAs": [
+              "https://www.linkedin.com/company/x23d-ag/"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://x23d.com/#website",
+            "url": "https://x23d.com/",
+            "name": "X23D",
+            "alternateName": "X23D AG",
+            "publisher": {
+              "@id": "https://x23d.com/#organization"
+            },
+            "inLanguage": "en"
+          }
+        ]
+      }
+    </script>
+    {% endif %}
 
     <link rel="icon" href="{{ '/assets/images/x23d-favicon.png' | relative_url }}" type="image/png" sizes="512x512">
     <link rel="apple-touch-icon" href="{{ '/assets/images/x23d-favicon.png' | relative_url }}">
